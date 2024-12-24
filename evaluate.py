@@ -8,7 +8,7 @@ df = pd.read_parquet("hf://datasets/neural-bridge/rag-hallucination-dataset-1000
 sample = df.iloc[0]
 
 question = sample["question"]
-contexts = sample["context"]
+contexts = [sample["context"]]
 # response = Groq_LLM().generate(system_msg="You are a helpful assistant",
 #                              prompt=f"""Question:{question}
 
