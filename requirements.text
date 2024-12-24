@@ -1,0 +1,6 @@
+python-dotenv
+transformers
+pandas
+torch
+groq
+datasets
