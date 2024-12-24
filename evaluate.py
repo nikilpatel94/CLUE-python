@@ -9,14 +9,14 @@ sample = df.iloc[0]
 
 question = sample["question"]
 contexts = [sample["context"]]
-# response = Groq_LLM().generate(system_msg="You are a helpful assistant",
-#                              prompt=f"""Question:{question}
+response = Groq_LLM().generate(system_msg="You are a helpful assistant",
+                             prompt=f"""Question:{question}
 
-# Knowledge:{contexts}
+Knowledge:{contexts}
 
-# Answer:""",)
+Answer:""",)
 
-response = sample["answer"]
+# response = sample["answer"]
 print("Question:",question)
 print("Contexts:",contexts)
 print(response)

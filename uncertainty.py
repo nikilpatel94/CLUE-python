@@ -22,6 +22,5 @@ class UncertaintyCalculatorRAG:
 
     def calculate_uncertainty(self,output_sequences:list[str]):
         self._extract_entailment_scores(output_sequences=output_sequences)
-        for entailment_scores_sequence in self.entailment_scores_all:
-            U = -1 * sum([math.log(entailment_score) for entailment_score in entailment_scores_sequence]) / len(entailment_scores_sequence)
-            self.uncertainty_scores.append(U)
+        U = -1 * sum([math.log(entailment_score[0]) for entailment_score in self.entailment_scores_all]) / len(self.entailment_scores_all)
+        self.uncertainty_scores.append(U)
