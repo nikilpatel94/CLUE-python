@@ -5,25 +5,26 @@ import os
 import warnings
 from dotenv import load_dotenv
 import os
-from config import NLIModelConfig,GorqLLMConfig,OpenAILLMConfig,TorchSetting
+from config import nli_config,torch_config
 from groq import Groq
 from openai import OpenAI
-SEED = 42
+
+SEED = torch_config.config["MANUAL_SEED"]
 torch.manual_seed(SEED)
 warnings.filterwarnings("ignore")
-use_accelerator = True
 load_dotenv()
 
 class Groq_LLM:
-    def __init__(self):
-        self.settings = GorqLLMConfig.config
+    def __init__(self,config:dict):
+        self.config = config
 
     # def groq_inference(self,system_msg:str,prompt:str,model:str="llama-3.1-70b-versatile",temp:float=0.0)->str:
-    def generate(self,system_msg:str,prompt:str)->str:
+    def generate(self,prompt:str)->str:
         client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
         try:
-            model = self.settings["model_name"]
-            temperature = self.settings["temperature"]
+            model = self.config.config["model_name"]
+            system_msg = self.config.config["system_msg"]
+            temperature = self.config.config["temperature"]
             response = client.chat.completions.create(
                         model=model,
                         temperature = temperature,
@@ -40,10 +41,10 @@ class Groq_LLM:
 
 
 class OpenAI_LLM:
-    def __init__(self):
-        self.settings = OpenAILLMConfig.config
+    def __init__(self,config:dict):
+        self.config = config
 
-    def generate(self,system_msg:str,prompt:str)->str:
+    def generate(self,prompt:str)->str:
             """
                 This function sends a prompt to the OpenAI for generation using gpt-4o-mini at temperature of 0.0 by default .
                 
@@ -55,8 +56,9 @@ class OpenAI_LLM:
                     str: The response from the model.
             """      
             try:
-                model = self.settings["model_name"]
-                temperature = self.settings["temperature"]
+                model = self.config["model_name"]
+                system_msg = self.config["system_msg"]
+                temperature = self.config["temperature"]
                 client = OpenAI()    
                 response = client.chat.completions.create(
                     model=model,
@@ -74,15 +76,15 @@ class OpenAI_LLM:
 
 class NLIModel:
     def __init__(self):
-        self.settings = NLIModelConfig.config
-        model_name = self.settings["model_name"]
-        local_model_path = self.settings["local_model_path"]
-        self.device  = self.settings["device"]
+        self.config = nli_config.config
+        model_name = self.config.config["model_name"]
+        local_model_path = self.config.config["local_model_path"]
+        self.device  = self.config.config["device"]
         if not os.path.exists(local_model_path):
             print("Downloading and saving the NLI model")
             pipe = pipeline("zero-shot-classification",
                             model="facebook/bart-large-mnli",
-                            device=device,
+                            device=self.device,
                             multi_label=False, 
                             cache_dir="./model/")
             pipe.model.save_pretrained(local_model_path)
@@ -101,7 +103,7 @@ class NLIModel:
 class NLIModelTorch(torch.nn.Module):
     def __init__(self)->None:
         super().__init__()
-        self.settings = NLIModelConfig.config
+        self.settings = nli_config.config
         hf_model_name = self.settings["model_name"]
         local_model_path = self.settings["local_model_path"]
         self.device  = self.settings["device"]
@@ -111,8 +113,6 @@ class NLIModelTorch(torch.nn.Module):
             pipe = pipeline("fill-mask", model=hf_model_name)  # Example pipeline
             pipe.model.save_pretrained(local_model_path)
             pipe.tokenizer.save_pretrained(local_model_path)
-        else:
-            print("Model directory exists.")
         self.model = AutoModelForSequenceClassification.from_pretrained(hf_model_name).to(self.device)
         self.tokenizer = AutoTokenizer.from_pretrained(hf_model_name)
         classification_config = GenerationConfig(eos_token_id=self.model.config.eos_token_id)
@@ -129,4 +129,3 @@ class NLIModelTorch(torch.nn.Module):
         probs = entail_contradiction_logits.softmax(dim=1)
         prob_label_is_true = probs[:,1][0].to('cpu').item()
         return prob_label_is_true
-        
