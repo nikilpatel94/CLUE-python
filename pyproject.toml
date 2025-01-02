@@ -1,0 +1,18 @@
+[project]
+name = "CLUE-PYTHON"
+version = "0.0.1"
+authors = [
+  { name="Nikil Patel", email="https://topmate.io/nikilpatel94" },
+]
+description = "Python implementation of CLUE (https://arxiv.org/abs/2409.03021)"
+readme = "README.md"
+requires-python = ">=3.12"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://github.com/nikilpatel94/CLUE-python"
+Issues = "https://github.com/nikilpatel94/CLUE-python/issues"
