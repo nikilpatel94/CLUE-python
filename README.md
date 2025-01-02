@@ -16,9 +16,9 @@ Below is the overview of how CLUE works.
 
 ## Limitations
 
-- No evaluations from the paper are included in this implementation
-- Multilingual evaluations can be difficult to evaluate with the current NLI model
-- For detecting RAG hallucinations using this framework, the irrelevant contexts has to be removed to get an accurate entailment scores and then uncertainty scores
+- Evaluations from the paper are not included in this implementation
+- Multilingual evaluations can be unpreditctable to evaluate with the used NLI model
+- For detecting RAG hallucinations using this framework, the irrelevant contexts from the retrieved list of contexts have to be removed to get accurate entailment scores and then uncertainty scores
 
 ## Immediate Road-map
 
