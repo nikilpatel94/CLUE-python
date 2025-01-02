@@ -11,8 +11,8 @@ Below is the overview of how CLUE works.
 
 ## Models/Platforms
 
-- To generate output sequences and concepts: ![groq](https://groq.com/)
-- To generate entailment scores: ![bart-large-mnli](https://huggingface.co/facebook/bart-large-mnli)
+- To generate output sequences and concepts: [groq](https://groq.com/)
+- To generate entailment scores: [bart-large-mnli](https://huggingface.co/facebook/bart-large-mnli)
 
 ## Limitations
 
