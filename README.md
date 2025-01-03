@@ -51,5 +51,6 @@ python .\src\example.py
 
 ## Immediate Road-map
 
+- [ ] Fix pooling of concepts
 - [ ] support for openai, ollama, google LLms
 
