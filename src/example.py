@@ -8,7 +8,7 @@ def run_demo(question:str,contexts:list[str])->None:
     output_sequences = generator.generate(question, contexts)
     concept_extractor = ConceptExtractor(llm_config=conceptLLM_config)
     extracted_concepts = concept_extractor.extract_concepts(output_sequences)
-    concept_pooler = ConceptPooler(similarity_threshold=0.98)
+    concept_pooler = ConceptPooler(similarity_threshold=0.98,similarity_model_name='all-MiniLM-L6-v2')
     pooled_concepts = concept_pooler.get_unique_concepts(concepts_list=extracted_concepts)
     uncerainty_calculator = UncertaintyCalculator()
     uncertainty_scores = uncerainty_calculator.calculate_uncertainty(pooled_concepts=pooled_concepts,output_sequences=output_sequences)
@@ -19,7 +19,7 @@ def run_demo(question:str,contexts:list[str])->None:
 
     print("\npooled concepts:",pooled_concepts)
 
-    print("\nuncertainty scores",uncertainty_scores)
+    print("\n Concept level uncertainty scores",uncertainty_scores)
 
 
 print("----Simple Question---:")

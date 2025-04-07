@@ -5,9 +5,12 @@ import os
 import warnings
 from dotenv import load_dotenv
 import os
-from config import nli_config,torch_config
+from config import nli_config,torch_config,similarity_config
 from groq import Groq
 from openai import OpenAI
+from sentence_transformers import SentenceTransformer
+import instructor
+from pydantic import BaseModel
 
 SEED = torch_config.config["MANUAL_SEED"]
 torch.manual_seed(SEED)
@@ -18,7 +21,26 @@ class Groq_LLM:
     def __init__(self,config:dict):
         self.config = config
 
-    # def groq_inference(self,system_msg:str,prompt:str,model:str="llama-3.1-70b-versatile",temp:float=0.0)->str:
+    def s_generate(self,prompt:str,base_model:BaseModel)->BaseModel:
+        instruct_client = instructor.from_groq(Groq(api_key=os.environ.get("GROQ_API_KEY")))
+        try:
+            model = self.config.config["model_name"]
+            system_msg = self.config.config["system_msg"]
+            temperature = self.config.config["temperature"]
+            reply = instruct_client.chat.completions.create(
+                        model=model,
+                        temperature = temperature,
+                        messages=[
+                            {"role": "system", "content": system_msg},
+                            {"role": "user", "content": prompt},
+                        ],
+                        response_model=base_model,
+                    )
+        except Exception as e:
+            print (f"An error occurred in structured generation: {e}")
+            reply = None
+        return reply
+
     def generate(self,prompt:str)->str:
         client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
         try:
@@ -129,3 +151,19 @@ class NLIModelTorch(torch.nn.Module):
         probs = entail_contradiction_logits.softmax(dim=1)
         prob_label_is_true = probs[:,1][0].to('cpu').item()
         return prob_label_is_true
+    
+class SimilarityModel:
+    def __init__(self,similarity_model_name:str):
+        self.config = similarity_config
+        if similarity_model_name:
+            model_name = similarity_model_name
+        else:
+            model_name = self.config.config["model_name"]
+        local_model_path = self.config.config["local_model_path"]
+        self.device  = self.config.config["device"]
+        if not os.path.exists(local_model_path):
+            print(f"Downloading and saving Sentence Transformer model {model_name}")
+            model = SentenceTransformer(model_name,device=self.device)
+            model.save(local_model_path)
+        self.model = SentenceTransformer(local_model_path,device=self.device)
+        print("Sentence Transformer model is ready for use.")

@@ -1,5 +1,6 @@
 .env
 */__pycache__/*
 /src/model/*
+/model/*
 artifacts/*
 data/*
