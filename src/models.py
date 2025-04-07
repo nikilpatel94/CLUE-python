@@ -5,9 +5,10 @@ import os
 import warnings
 from dotenv import load_dotenv
 import os
-from config import nli_config,torch_config
+from config import nli_config,torch_config,similarity_config
 from groq import Groq
 from openai import OpenAI
+from sentence_transformers import SentenceTransformer
 
 SEED = torch_config.config["MANUAL_SEED"]
 torch.manual_seed(SEED)
@@ -129,3 +130,19 @@ class NLIModelTorch(torch.nn.Module):
         probs = entail_contradiction_logits.softmax(dim=1)
         prob_label_is_true = probs[:,1][0].to('cpu').item()
         return prob_label_is_true
+    
+class SimilarityModel:
+    def __init__(self,similarity_model_name:str):
+        self.config = similarity_config
+        if similarity_model_name:
+            model_name = similarity_model_name
+        else:
+            model_name = self.config.config["model_name"]
+        local_model_path = self.config.config["local_model_path"]
+        self.device  = self.config.config["device"]
+        if not os.path.exists(local_model_path):
+            print(f"Downloading and saving Sentence Transformer model {model_name}")
+            model = SentenceTransformer(model_name,device=self.device)
+            model.save(local_model_path)
+        self.model = SentenceTransformer(local_model_path,device=self.device)
+        print("Sentence Transformer model is ready for use.")

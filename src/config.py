@@ -19,6 +19,12 @@ nli_config = Config({
     "device": get_device()
     })
 
+similarity_config = Config({
+    "model_name" : "all-MiniLM-L6-v2",
+    "local_model_path": "./model/st/all-MiniLM-L6-v2",
+    "device": get_device()
+    })
+
 conceptLLM_config = Config({
         "provider":"groq",
         "model_name": "llama-3.3-70b-versatile",

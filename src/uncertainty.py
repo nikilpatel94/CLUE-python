@@ -18,7 +18,7 @@ class UncertaintyCalculator:
             output_sequences (list[str]): List of output sequences.
 
         Returns:
-            list: List of entailment scores for each concept in the pooled concepts for each output sequence
+            list: Entailment scores for each concept in the pooled concepts for each output sequence
         """
         try:
             if concepts is []:
