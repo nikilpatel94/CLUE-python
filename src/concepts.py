@@ -1,6 +1,10 @@
 from models import Groq_LLM,SimilarityModel
 import numpy as np
 from sentence_transformers import util
+from pydantic import BaseModel
+
+class Concepts(BaseModel):
+    concepts:list[str]
 
 class ConceptPooler:
     
@@ -60,8 +64,8 @@ class ConceptExtractor:
 
     def _generate(self,prompt:str)->list[str]:
         groq_llm = Groq_LLM(self.llm_config)
-        generated_concepts:str = groq_llm.generate(prompt=prompt)
-        parsed_concepts:list[str] = self._parse_concepts(generated_concepts)
+        generated_concepts = groq_llm.s_generate(prompt=prompt,base_model=Concepts)
+        parsed_concepts:list[str] = generated_concepts.concepts
         return parsed_concepts
     
     def extract_concepts(self,text_sequence:list[str])->list[str]:
