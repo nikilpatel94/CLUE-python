@@ -19,7 +19,7 @@ def run_demo(question:str,contexts:list[str])->None:
 
     print("\npooled concepts:",pooled_concepts)
 
-    print("\nuncertainty scores",uncertainty_scores)
+    print("\n Concept level uncertainty scores",uncertainty_scores)
 
 
 print("----Simple Question---:")

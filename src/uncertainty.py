@@ -1,7 +1,7 @@
-import math
 import torch
 from models import NLIModelTorch
 from config import torch_config
+import numpy as np
 
 torch.manual_seed(torch_config.config["MANUAL_SEED"])
 
@@ -24,15 +24,11 @@ class UncertaintyCalculator:
             if concepts is []:
                 raise ValueError("No Pooled concepts found.")
             else:
-                entailment_scores_all = []
-                for output_sequence in output_sequences:
-                    entailment_score_for_sequence = []
-                    for concept in concepts:
-                        score = self.nli_model.get_entailment_score(output_sequence = output_sequence,concept=concept)
-                        entailment_score_for_sequence.append(score)
-                    entailment_scores_all.append(entailment_score_for_sequence)
-                assert len(entailment_scores_all) == len(output_sequences)
-                return entailment_scores_all
+                s_i_j = np.empty((len(output_sequences), len(concepts)))
+                for i,o_i in enumerate(output_sequences):
+                    for j,c_j in enumerate(concepts):
+                        s_i_j[i][j] = self.nli_model.get_entailment_score(output_sequence = o_i,concept=c_j)
+                return s_i_j
         except Exception as e:
             print("Exception occurred while calculating entailment scores: ", e)
             return []
@@ -48,9 +44,6 @@ class UncertaintyCalculator:
         Returns:
             list: List of uncertainty scores for each output sequence.
         """
-        uncertainty_scores = []
-        entailment_scores = self.extract_entailment_scores(concepts=pooled_concepts,output_sequences=output_sequences)
-        for score_batch in entailment_scores:
-            U = -1 * sum([math.log(entailment_score) for entailment_score in score_batch]) / len(score_batch)
-            uncertainty_scores.append(U)
-        return uncertainty_scores
+        s_i_j = self.extract_entailment_scores(concepts=pooled_concepts,output_sequences=output_sequences)
+        U_j = np.mean(-1 * np.log(s_i_j),axis=0)
+        return U_j
