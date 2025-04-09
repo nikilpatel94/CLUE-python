@@ -46,11 +46,14 @@ python .\src\example.py
 ## Limitations
 
 - Evaluations from the paper are not included in this implementation
-- Multilingual evaluations can be unpreditctable to evaluate with the used NLI model
-- For detecting RAG hallucinations using this framework, the irrelevant contexts from the retrieved list of contexts have to be removed to get accurate entailment scores and then uncertainty scores
+- Multilingual evaluations can be unpredictable to evaluate with the used NLI model
+- Dataset evaluations are pending
 
 ## Immediate Road-map
 
 - [x] Fix pooling of concepts
-- [ ] support for openai, ollama, google LLms
+- [ ] Model Agnostic LLM usage - Support for openai, Ollama and other LLMs
+- [x] Streamline lib and model imports
+- [x] Add Context usability
+- [ ] Dataset Validation
 

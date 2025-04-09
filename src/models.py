@@ -1,19 +1,18 @@
 from transformers import pipeline
-from transformers import AutoModel, AutoTokenizer,AutoModelForSequenceClassification,GenerationConfig
+from transformers import AutoTokenizer,AutoModelForSequenceClassification,GenerationConfig
 import torch
 import os
 import warnings
 from dotenv import load_dotenv
 import os
-from config import nli_config,torch_config,similarity_config
+from config import nli_config,torch_config,similarityLM_config
+from datatypes import Config
 from groq import Groq
 from openai import OpenAI
 from sentence_transformers import SentenceTransformer
 import instructor
 from pydantic import BaseModel
 
-SEED = torch_config.config["MANUAL_SEED"]
-torch.manual_seed(SEED)
 warnings.filterwarnings("ignore")
 load_dotenv()
 
@@ -22,6 +21,16 @@ class Groq_LLM:
         self.config = config
 
     def s_generate(self,prompt:str,base_model:BaseModel)->BaseModel:
+        """
+        Generates outputs in Structured format with supplied BaseModel, using the Groq LLM and Instructor API.
+
+        Args:
+            prompt (str): User prompt 
+            base_model (pydantic.BaseModel): The pydantic BaseModel to be used to get the list of concepts.
+        
+        Returns:
+            pydantic.BaseModel: BaseModel object.
+        """
         instruct_client = instructor.from_groq(Groq(api_key=os.environ.get("GROQ_API_KEY")))
         try:
             model = self.config.config["model_name"]
@@ -42,6 +51,15 @@ class Groq_LLM:
         return reply
 
     def generate(self,prompt:str)->str:
+        """
+        Generates outputs with normal inference using the Groq LLM.
+
+        Args:
+            prompt (str): User prompt 
+        
+        Returns:
+            str: The generated text from the model.
+        """
         client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
         try:
             model = self.config.config["model_name"]
@@ -96,31 +114,6 @@ class OpenAI_LLM:
             except Exception as e:
                 print (f"An error occurred: {e}")
 
-class NLIModel:
-    def __init__(self):
-        self.config = nli_config.config
-        model_name = self.config.config["model_name"]
-        local_model_path = self.config.config["local_model_path"]
-        self.device  = self.config.config["device"]
-        if not os.path.exists(local_model_path):
-            print("Downloading and saving the NLI model")
-            pipe = pipeline("zero-shot-classification",
-                            model="facebook/bart-large-mnli",
-                            device=self.device,
-                            multi_label=False, 
-                            cache_dir="./model/")
-            pipe.model.save_pretrained(local_model_path)
-            pipe.tokenizer.save_pretrained(local_model_path)
-        else:
-            print("Model already exists locally.")
-        print("Model and tokenizer are ready for use.")
-        self.classifier = pipeline("zero-shot-classification",
-                        model=local_model_path,device=self.device,multi_label=False)
-    
-    def get_entailment_score(self,sequence_to_classify:str,candidate_labels:list[str])->list:
-        scores=self.classifier(sequence_to_classify, candidate_labels)
-        return scores["scores"]
-    
 
 class NLIModelTorch(torch.nn.Module):
     def __init__(self)->None:
@@ -140,8 +133,13 @@ class NLIModelTorch(torch.nn.Module):
         classification_config = GenerationConfig(eos_token_id=self.model.config.eos_token_id)
         classification_config.save_pretrained(local_model_path)
 
-    def forward(self,output_sequence:str,concept:str)->torch.Tensor:
-        x = self.tokenizer.encode(output_sequence, concept, padding=True,return_tensors='pt',truncation='longest_first').to(self.device)
+    def forward(self,basis_sequence:str,concept:str)->torch.Tensor:
+        if "MANUAL_SEED" in self.settings.keys():
+            SEED = self.settings["MANUAL_SEED"]
+        else:
+            SEED = torch_config.config["MANUAL_SEED"]
+        torch.manual_seed(SEED)
+        x = self.tokenizer.encode(basis_sequence, concept, padding=True,return_tensors='pt',truncation='longest_first').to(self.device)
         logits = self.model(x)[0]
         return logits
 
@@ -153,12 +151,9 @@ class NLIModelTorch(torch.nn.Module):
         return prob_label_is_true
     
 class SimilarityModel:
-    def __init__(self,similarity_model_name:str):
-        self.config = similarity_config
-        if similarity_model_name:
-            model_name = similarity_model_name
-        else:
-            model_name = self.config.config["model_name"]
+    def __init__(self,llm_config:Config=similarityLM_config):
+        self.config = llm_config
+        model_name = self.config.config["model_name"]
         local_model_path = self.config.config["local_model_path"]
         self.device  = self.config.config["device"]
         if not os.path.exists(local_model_path):
