@@ -1,28 +1,28 @@
 from datatypes import Config
 import torch
 
-def get_device():
+def get_device(verbose:bool=False):
     if torch.backends.mps.is_available():
         device = 'mps' 
-        print("Using mps for NLI inference.")
     elif torch.cuda.is_available():
         device = 'cuda'
-        print("Using cuda for NLI inference.")
     else: 
         device = "cpu"
-        print("Neither mps nor cuda found. Continuing with CPU for NLI inference.")
+    if verbose: print(f"Using {device} for local inference.")
     return device
 
 nli_config = Config({
     "model_name" : "facebook/bart-large-mnli",
     "local_model_path": "./model/facebook/bart-large-mnli",
-    "device": get_device()
+    "device":get_device(),
+    "MANUAL_SEED": 42
     })
 
-similarity_config = Config({
+similarityLM_config = Config({
     "model_name" : "all-MiniLM-L6-v2",
+    "similarity_threshold": 0.98,
     "local_model_path": "./model/st/all-MiniLM-L6-v2",
-    "device": get_device()
+    'device':get_device(),
     })
 
 conceptLLM_config = Config({
@@ -37,7 +37,8 @@ conceptLLM_config = Config({
 os_generatorLLM_config = Config({
         "provider":"groq",
         "model_name": "llama-3.3-70b-versatile",
-        "temperature": 0.7,
+        # "model_name":"gemma2-9b-it",
+        "temperature": 0.0,
         "system_msg": "You are helpful and harmless and you follow ethical guidelines and promote positive behavior. Use external knowledge to generate the output.",
     }
 )
