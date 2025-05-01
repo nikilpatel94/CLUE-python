@@ -4,6 +4,14 @@ from pydantic import BaseModel
 class Concepts(BaseModel):
     concepts:list[str]
 
+class OutputLLM:
+    def __init__(self):
+        pass
+    def s_generate(self,prompt:str,base_model:BaseModel)->BaseModel:
+        pass
+    def generate(self,prompt:str)->str:
+        pass
+
 @dataclass
 class Config:
     config:dict

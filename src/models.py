@@ -6,7 +6,7 @@ import warnings
 from dotenv import load_dotenv
 import os
 from config import nli_config,torch_config,similarityLM_config
-from datatypes import Config
+from datatypes import Config,OutputLLM
 from groq import Groq
 from openai import OpenAI
 from sentence_transformers import SentenceTransformer
@@ -16,7 +16,7 @@ from pydantic import BaseModel
 warnings.filterwarnings("ignore")
 load_dotenv()
 
-class Groq_LLM:
+class Groq_LLM(OutputLLM):
     def __init__(self,config:dict):
         self.config = config
 
@@ -80,7 +80,7 @@ class Groq_LLM:
         return reply
 
 
-class OpenAI_LLM:
+class OpenAI_LLM(OutputLLM):
     def __init__(self,config:dict):
         self.config = config
 

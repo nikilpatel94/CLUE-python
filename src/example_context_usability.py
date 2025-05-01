@@ -1,18 +1,41 @@
 #%%
 from evaluate import calculate_contexts_usability
-print("----Simple Question---:")
+from datatypes import ContextUsability
+def print_output(question:str,contexts:list[str],scores:ContextUsability):
+    print("\n--> Question:",question)
+    print("\n--> Contexts:",contexts)
+    print(f"\n--> Generated output: {scores.generated_output}")
+    print("\n-------------Context | Usability Score-------------")
+    print('\n'.join(f"{contexts[idx]} | {round(scores.usability_scores[idx],3)}" for idx in range(len(contexts))))
+
+
+#%%
+print("*****************************************************")
+print("\tContext Usability Calculation Demo")
+print("*****************************************************")
+
+print("--------------Simple Question--------------")
 question1 = "What is the capital of France?"
 contexts1 = ["Paris is the capital and most populous city of France.",
              "I am huge fan of MacDonalds.",
             "The capital cities of the world are usually the most populous cities in their respective countries.",
             "Reddit is a better social media platform than every other out there."]
-scores1 = calculate_contexts_usability(question=question1,retrieved_contexts=contexts1,generated_output=None,max_output_sequences=1)
-print(f"Generated output: {scores1.generated_output}")
-print("Context | Usability Score")
-print('\n'.join(f"{contexts1[idx]} | {round(scores1.usability_scores[idx],3)}" for idx in range(len(contexts1))))
+scores1 = calculate_contexts_usability(question=question1,retrieved_contexts=contexts1,generated_output=None)
+print_output(question1,contexts1,scores=scores1)
 
 #%%
-print("----Tricky Question---:")
+print("--------------Simple Question with Generation--------------")
+question1 = "What is the capital of France?"
+contexts1 = ["Paris is the capital and most populous city of France.",
+             "I am huge fan of MacDonalds.",
+            "The capital cities of the world are usually the most populous cities in their respective countries.",
+            "Reddit is a better social media platform than every other out there."]
+generated_output1 = "Paris is the capital of France."
+scores1 = calculate_contexts_usability(question=question1,retrieved_contexts=contexts1,generated_output=generated_output1)
+print_output(question1,contexts1,scores=scores1)
+
+#%%
+print("----Tricky Question with Generation---:")
 question2 = "Who won Border-Gavaskar trophy in 2023??"
 contexts2 = [
 """The Border–Gavaskar Trophy is one of the premier bilateral trophies in Test cricket. Both teams have a reputation of being difficult to beat at home. """,
@@ -21,10 +44,9 @@ contexts2 = [
 The competitiveness of the series is also reflected in that in both 2000–01 and 2007–08, it was India who ended Australian streaks of 16 consecutive Test wins. """,
 """The 2000–01 series was labelled as the "final frontier" for Australia by their captain Steve Waugh due to the difficulty of winning in India, and was closely fought on both sides. """
 ]
-outputs2 = ["I do not know."]
-scores2 = calculate_contexts_usability(question=question2,retrieved_contexts=contexts2,generated_output=outputs2)
-print("Context | Usability Score")
-print('\n'.join(f"{contexts2[idx]} | {round(scores2.usability_scores[idx],3)}" for idx in range(len(contexts2))))
+generated_output2 = "I do not know."
+scores2 = calculate_contexts_usability(question=question2,retrieved_contexts=contexts2,generated_output=generated_output2)
+print_output(question2,contexts2,scores=scores2)
 
 
 # %%
