@@ -122,14 +122,14 @@ class NLIModelTorch(torch.nn.Module):
         hf_model_name = self.settings["model_name"]
         local_model_path = self.settings["local_model_path"]
         self.device  = self.settings["device"]
-        if not os.path.exists(local_model_path):
+        if not os.path.exists(os.path.join(local_model_path, "config.json")):
             print("Downloading and saving the model...")
             # Create a pipeline to trigger downloading the model
             pipe = pipeline("fill-mask", model=hf_model_name)  # Example pipeline
             pipe.model.save_pretrained(local_model_path)
             pipe.tokenizer.save_pretrained(local_model_path)
-        self.model = AutoModelForSequenceClassification.from_pretrained(hf_model_name).to(self.device)
-        self.tokenizer = AutoTokenizer.from_pretrained(hf_model_name)
+        self.model = AutoModelForSequenceClassification.from_pretrained(local_model_path).to(self.device)
+        self.tokenizer = AutoTokenizer.from_pretrained(local_model_path)
         classification_config = GenerationConfig(eos_token_id=self.model.config.eos_token_id)
         classification_config.save_pretrained(local_model_path)
 
@@ -156,7 +156,7 @@ class SimilarityModel:
         model_name = self.config.config["model_name"]
         local_model_path = self.config.config["local_model_path"]
         self.device  = self.config.config["device"]
-        if not os.path.exists(local_model_path):
+        if not os.path.exists(os.path.join(local_model_path, "config.json")):
             print(f"Downloading and saving Sentence Transformer model {model_name}")
             model = SentenceTransformer(model_name,device=self.device)
             model.save(local_model_path)
