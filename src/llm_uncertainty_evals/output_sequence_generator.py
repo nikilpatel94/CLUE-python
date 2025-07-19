@@ -1,4 +1,4 @@
-from models import Groq_LLM
+from llm_uncertainty_evals.models import Groq_LLM
 
 class OutputSequenceGenerator:
     def __init__(self, llm_config:dict,max_output_sequences:int=3):

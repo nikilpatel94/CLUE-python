@@ -1,0 +1,95 @@
+Metadata-Version: 2.4
+Name: llm-uncertainty-evals
+Version: 0.0.1
+Summary: Python package for measuring uncertainty in LLM responses and measuring the context usability in RAG responses, inspired by CLUE (https://arxiv.org/abs/2409.03021)
+Author: nikilp
+Project-URL: Homepage, https://github.com/nikilpatel94/CLUE-python
+Project-URL: Issues, https://github.com/nikilpatel94/CLUE-python/issues
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.12
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: python-dotenv==1.0.1
+Requires-Dist: transformers==4.47.1
+Requires-Dist: pandas==2.2.3
+Requires-Dist: torch==2.5.1
+Requires-Dist: openai==1.58.1
+Requires-Dist: groq==0.13.1
+Requires-Dist: datasets==3.2.0
+Requires-Dist: numpy==2.2.4
+Requires-Dist: sentence-transformers==4.0.2
+Requires-Dist: pydantic==2.10.6
+Requires-Dist: instructor==1.7.9
+Requires-Dist: appdirs==1.4.4
+Dynamic: license-file
+
+# CLUE-python
+The python implementation of [CLUE: Concept-Level Uncertainty Estimation for Large Language Models](https://arxiv.org/abs/2409.03021) paper.
+
+## Overview
+
+CLUE can be used to derive an explainable uncertainty in black box LLM generation using NLI.
+
+
+In addition to paper's contribution for measuring Concept level uncertainty for LLMs, I introduce a new way of using CLUE and Concept level uncertainty for measuring Context Usability.
+Given the Input, Retrieved Contexts and the Generated output, there is an evaluator that measures the uncertainty
+in every context chunk with respect to the generated output and provide an uncertainty score against each contexts. The basic idea is the context uncertainty score is likely to be inversely proposal to the context's contribution in the generation and hence shows its usability. 
+In simple words: High Uncertainty ≈ Non useful. 
+
+In summary, I have two evaluators:
+
+1. **Vanilla CLUE** - measures Concept Level Uncertainty
+2. **Context Usability** - measures context usefulness (i.e. Contribution of each context chunk into its generation)
+
+![Alt text](images/CLUE_diagram.png)
+
+## Models/Platforms
+
+- To generate output sequences and concepts: [groq](https://groq.com/)
+- To generate entailment scores: [bart-large-mnli](https://huggingface.co/facebook/bart-large-mnli)
+
+## Environment vars
+```var
+GROQ_API_KEY=
+```
+
+## Demo
+
+Bash/shell
+```shell
+git clone https://github.com/nikilpatel94/CLUE-python.git
+cd CLUE-python
+conda create --name CLUE-python python=3.12.0
+conda activate CLUE-python
+pip install -r requirements.txt
+EXPORT GROQ_API_KEY=your_groq_key
+python ./src/example.py
+```
+
+Windows powershell
+```powershell
+git clone https://github.com/nikilpatel94/CLUE-python.git
+cd CLUE-python
+conda create --name CLUE-python python=3.12.0
+conda activate CLUE-python
+pip install -r requirements.txt
+$env:GROQ_API_KEY="your_groq_key"
+python .\src\example.py
+```
+
+## Limitations
+
+- Evaluations from the paper are not included in this implementation
+- Multilingual evaluations can be unpredictable to evaluate with the used NLI model
+- Dataset evaluations are pending
+
+## Immediate Road-map
+
+- [x] Fix pooling of concepts
+- [ ] Model Agnostic LLM usage - Support for openai, Ollama and other LLMs
+- [x] Streamline lib and model imports
+- [x] Add Context usability
+- [ ] Dataset Validation
+
