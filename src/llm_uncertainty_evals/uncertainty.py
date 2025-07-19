@@ -1,6 +1,6 @@
 import torch
-from models import NLIModelTorch
-from config import torch_config
+from llm_uncertainty_evals.models import NLIModelTorch
+from llm_uncertainty_evals.config import torch_config
 import numpy as np
 
 torch.manual_seed(torch_config.config["MANUAL_SEED"])

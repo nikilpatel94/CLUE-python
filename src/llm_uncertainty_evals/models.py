@@ -5,8 +5,8 @@ import os
 import warnings
 from dotenv import load_dotenv
 import os
-from config import nli_config,torch_config,similarityLM_config
-from datatypes import Config
+from llm_uncertainty_evals.config import nli_config,torch_config,similarityLM_config
+from llm_uncertainty_evals.datatypes import Config
 from groq import Groq
 from openai import OpenAI
 from sentence_transformers import SentenceTransformer

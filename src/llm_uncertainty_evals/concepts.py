@@ -1,7 +1,7 @@
-from models import Groq_LLM,SimilarityModel
+from llm_uncertainty_evals.models import Groq_LLM,SimilarityModel
 import numpy as np
 from sentence_transformers import util
-from datatypes import Concepts,Config
+from llm_uncertainty_evals.datatypes import Concepts,Config
 
 class ConceptPooler:
     

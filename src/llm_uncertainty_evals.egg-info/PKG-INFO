@@ -1,10 +1,8 @@
 Metadata-Version: 2.4
-Name: CLUE-PYTHON
+Name: llm-uncertainty-evals
 Version: 0.0.1
-Summary: Python implementation of CLUE (https://arxiv.org/abs/2409.03021)
-Home-page: https://github.com/nikilpatel94/CLUE-python
-Author: Nikil Patel
-Author-email: Nikil Patel <nikil.patel@example.com>
+Summary: Python package for measuring uncertainty in LLM responses and measuring the context usability in RAG responses, inspired by CLUE (https://arxiv.org/abs/2409.03021)
+Author: nikilp
 Project-URL: Homepage, https://github.com/nikilpatel94/CLUE-python
 Project-URL: Issues, https://github.com/nikilpatel94/CLUE-python/issues
 Classifier: Programming Language :: Python :: 3
@@ -25,10 +23,7 @@ Requires-Dist: sentence-transformers==4.0.2
 Requires-Dist: pydantic==2.10.6
 Requires-Dist: instructor==1.7.9
 Requires-Dist: appdirs==1.4.4
-Dynamic: author
-Dynamic: home-page
 Dynamic: license-file
-Dynamic: requires-python
 
 # CLUE-python
 The python implementation of [CLUE: Concept-Level Uncertainty Estimation for Large Language Models](https://arxiv.org/abs/2409.03021) paper.
@@ -40,8 +35,8 @@ CLUE can be used to derive an explainable uncertainty in black box LLM generatio
 
 In addition to paper's contribution for measuring Concept level uncertainty for LLMs, I introduce a new way of using CLUE and Concept level uncertainty for measuring Context Usability.
 Given the Input, Retrieved Contexts and the Generated output, there is an evaluator that measures the uncertainty
-in every context chunk with respect to the generated output and provide an uncertainty score against each contexts. The basic idea is the context uncertainty score is likely to be inversely proposal to the context's contribution in the generation and hence shows its usability.
-In simple words: High Uncertainty ≈ Non useful.
+in every context chunk with respect to the generated output and provide an uncertainty score against each contexts. The basic idea is the context uncertainty score is likely to be inversely proposal to the context's contribution in the generation and hence shows its usability. 
+In simple words: High Uncertainty ≈ Non useful. 
 
 In summary, I have two evaluators:
 
@@ -97,3 +92,4 @@ python .\src\example.py
 - [x] Streamline lib and model imports
 - [x] Add Context usability
 - [ ] Dataset Validation
+

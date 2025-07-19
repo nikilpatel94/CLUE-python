@@ -1,10 +1,10 @@
-from datatypes import Config
+from llm_uncertainty_evals.datatypes import Config
 import torch
 from appdirs import user_cache_dir
 import os
 
 APP_NAME = "CLUE-PYTHON"
-APP_AUTHOR = "NikilPatel"
+APP_AUTHOR = "NikilP"
 
 def get_device(verbose:bool=False):
     if torch.backends.mps.is_available():

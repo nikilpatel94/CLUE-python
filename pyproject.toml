@@ -1,10 +1,10 @@
 [project]
-name = "CLUE-PYTHON"
+name = "llm-uncertainty-evals"
 version = "0.0.1"
 authors = [
-  { name="Nikil Patel", email="nikil.patel@example.com" },
+  { name="nikilp" },
 ]
-description = "Python implementation of CLUE (https://arxiv.org/abs/2409.03021)"
+description = "Python package for measuring uncertainty in LLM responses and measuring the context usability in RAG responses, inspired by CLUE (https://arxiv.org/abs/2409.03021)"
 readme = "README.md"
 requires-python = ">=3.12"
 classifiers = [

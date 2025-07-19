@@ -1,8 +1,8 @@
-from output_sequence_generator import OutputSequenceGenerator
-from concepts import ConceptExtractor,ConceptPooler
-from uncertainty import UncertaintyCalculator
-from datatypes import ModelUncertainty,ContextUsability,Config
-from config import os_generatorLLM_config,conceptLLM_config, similarityLM_config
+from llm_uncertainty_evals.output_sequence_generator import OutputSequenceGenerator
+from llm_uncertainty_evals.concepts import ConceptExtractor,ConceptPooler
+from llm_uncertainty_evals.uncertainty import UncertaintyCalculator
+from llm_uncertainty_evals.datatypes import ModelUncertainty,ContextUsability,Config
+from llm_uncertainty_evals.config import os_generatorLLM_config,conceptLLM_config, similarityLM_config
 
 def calculate_contexts_usability(question:str,
                          retrieved_contexts:list[str],
@@ -29,7 +29,7 @@ def calculate_model_uncertainty(question:str,
                                 max_output_sequences:int=3,
                                 os_generatorLLM_config:Config=os_generatorLLM_config,
                                 conceptLLM_config:Config=conceptLLM_config
-                                )->ContextUsability:
+                                )->ModelUncertainty:
     generator = OutputSequenceGenerator(llm_config=os_generatorLLM_config,max_output_sequences=max_output_sequences)
     output_sequences = generator.generate(question, retrieved_contexts)
     concept_extractor = ConceptExtractor(llm_config=conceptLLM_config)

@@ -1,6 +1,8 @@
 .env
 */__pycache__/*
-/src/model/*
 /model/*
+/src/model/*
+/src/*/__pycache__/*
+/src/llm_uncertainty_evals/model/*
 artifacts/*
 data/*venv/
